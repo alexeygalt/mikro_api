@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "mikro_api"
+version = "0.1.0"
+description = ""
+authors = ["alexeygalt <alexeygalt@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.0"
+uvicorn = "^0.31.0"
+pydantic = ">=2.9.2"
+pydantic-settings = "^2.5.2"
+pydantic-core = "2.23.4"
+SQLAlchemy = "^2.0.35"
+alembic = "^1.13.3"
+psycopg2-binary = "^2.9.9"
+redis = "^5.1.1"
+
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
