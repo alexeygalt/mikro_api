@@ -1,6 +1,5 @@
-from sqlalchemy.orm import Mapped, declarative_base, mapped_column
-
-Base = declarative_base()
+from database.database import Base
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class Tasks(Base):
