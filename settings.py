@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     REDIS_PORT: int
     REDIS_DB: int
 
+    # JWT
+    JWT_SECRET_KEY: str
+    JWT_ENCODE_ALGORITHM: str
+
     class Config:
         env_file = '.env'
 

@@ -21,8 +21,14 @@ class TaskRepository:
             tasks = session.execute(select(Tasks)).scalars().all()
         return tasks
 
-    def create_task(self, task: TaskBaseSchema) -> TaskSchema:
-        task = Tasks(name=task.name, pomodoro_count=task.pomodoro_count, category_id=task.category_id)
+    def get_user_task(self, task_id: int, user_id: int) -> Tasks | None:
+        query = select(Tasks).where(Tasks.id == task_id, Tasks.user_id == user_id)
+        with self.db_session() as session:
+            task = session.execute(query).scalar_one_or_none()
+        return task
+
+    def create_task(self, task: TaskBaseSchema, user_id: int) -> TaskSchema:
+        task = Tasks(name=task.name, pomodoro_count=task.pomodoro_count, category_id=task.category_id, user_id=user_id)
         with self.db_session() as session:
             session.add(task)
             session.commit()
