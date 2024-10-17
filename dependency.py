@@ -2,6 +2,7 @@ from fastapi import Request, Security, HTTPException
 from fastapi import security
 
 from cache.accessor import get_redis_connection
+from client.google import GoogleClient
 from database.accessor import get_db_session, Session
 from exeptions import TokenNotValidException, TokenExpiredException
 from repository.cache_task import TaskCache
@@ -36,10 +37,15 @@ def get_task_service(
                        task_repository=task_repository)
 
 
+def get_google_client() -> GoogleClient:
+    return GoogleClient(settings=settings)
+
+
 def get_auth_service(
         user_repository: UserRepository = Depends(get_user_repository),
+        google_client: GoogleClient = Depends(get_google_client)
 ) -> AuthService:
-    return AuthService(user_repository=user_repository, settings=settings)
+    return AuthService(user_repository=user_repository, settings=settings, google_client=google_client)
 
 
 def get_user_service(
@@ -61,5 +67,3 @@ def get_request_user_id(auth_service: AuthService = Depends(get_auth_service),
 
     except TokenExpiredException as e:
         raise HTTPException(status_code=401, detail=e.detail)
-
-

@@ -16,3 +16,11 @@ class TokenNotValidException(Exception):
 
 class TaskNotFoundException(Exception):
     detail = 'Task not found'
+
+
+class GoogleAuthError(Exception):
+    pass
+
+
+class InvalidTokenError(GoogleAuthError):
+    pass
