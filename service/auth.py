@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from client.google import GoogleClient
+from client.yandex import YandexClient
 from exeptions import UserNotFoundException, UserNotCorrectPasswordException, TokenExpiredException, \
     TokenNotValidException
 from models.user import UserProfile
@@ -18,6 +19,7 @@ class AuthService:
     user_repository: UserRepository
     settings: Settings
     google_client: GoogleClient
+    yandex_client: YandexClient
 
     def login(self, username: str, password: str) -> UserLoginSchema:
         user = self.user_repository.get_by_username(username)
@@ -28,7 +30,11 @@ class AuthService:
     def get_google_redirect_url(self):
         return self.settings.google_redirect_url
 
-    def google_auth(self, code: str):
+    def get_yandex_redirect_url(self):
+        print(self.settings.yandex_redirect_url)
+        return self.settings.yandex_redirect_url
+
+    def google_auth(self, code: str) -> UserLoginSchema:
         user_data = self.google_client.get_user_info(code)
         if user := self.user_repository.get_user_by_email(email=user_data.email):
             access_token = self.generate_access_token(user.id)
@@ -39,6 +45,20 @@ class AuthService:
         created_user = self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(created_user.id)
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
+
+    def yandex_auth(self, code: str) -> UserLoginSchema:
+        user_data = self.yandex_client.get_user_info(code)
+
+        if user := self.user_repository.get_user_by_email(email=user_data.default_email):
+            access_token = self.generate_access_token(user.id)
+            return UserLoginSchema(user_id=user.id, access_token=access_token)
+
+        create_user_data = UserCreateSchema(yandex_access_token=user_data.access_token, email=user_data.default_email,
+                                            name=user_data.name)
+        created_user = self.user_repository.create_user(create_user_data)
+        access_token = self.generate_access_token(created_user.id)
+        return UserLoginSchema(user_id=created_user.id, access_token=access_token)
+
 
     @staticmethod
     def _validate_auth_user(user: UserProfile, password: str) -> None:

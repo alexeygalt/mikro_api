@@ -3,6 +3,7 @@ from fastapi import security
 
 from cache.accessor import get_redis_connection
 from client.google import GoogleClient
+from client.yandex import YandexClient
 from database.accessor import get_db_session, Session
 from exeptions import TokenNotValidException, TokenExpiredException
 from repository.cache_task import TaskCache
@@ -41,11 +42,17 @@ def get_google_client() -> GoogleClient:
     return GoogleClient(settings=settings)
 
 
+def get_yandex_client() -> YandexClient:
+    return YandexClient(settings=settings)
+
+
 def get_auth_service(
         user_repository: UserRepository = Depends(get_user_repository),
-        google_client: GoogleClient = Depends(get_google_client)
+        google_client: GoogleClient = Depends(get_google_client),
+        yandex_client: YandexClient = Depends(get_yandex_client)
 ) -> AuthService:
-    return AuthService(user_repository=user_repository, settings=settings, google_client=google_client)
+    return AuthService(user_repository=user_repository, settings=settings, google_client=google_client,
+                       yandex_client=yandex_client)
 
 
 def get_user_service(

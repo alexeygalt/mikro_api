@@ -28,6 +28,17 @@ async def google_login(auth_service: Annotated[AuthService, Depends(get_auth_ser
     return RedirectResponse(url=redirect_url)
 
 
+@router.get("/login/yandex", response_class=RedirectResponse)
+async def yandex_login(auth_service: Annotated[AuthService, Depends(get_auth_service)]):
+    redirect_url = auth_service.get_yandex_redirect_url()
+    return RedirectResponse(url=redirect_url)
+
+
 @router.get("/google")
 async def google_auth(auth_service: Annotated[AuthService, Depends(get_auth_service)], code: str):
     return auth_service.google_auth(code=code)
+
+
+@router.get("/yandex")
+async def yandex_auth(auth_service: Annotated[AuthService, Depends(get_auth_service)], code: str):
+    return auth_service.yandex_auth(code=code)
