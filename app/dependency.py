@@ -1,22 +1,21 @@
 from fastapi import HTTPException
 from fastapi import security
 
-from app.client.google import GoogleClient
+from app.tasks.repository.task import TaskRepository
+from app.tasks.service import TaskService
+from app.users.auth.client.google import GoogleClient
 from app.exeptions import TokenExpiredException, TokenNotValidException
 from app.infrastructure.cache.accessor import get_redis_connection
-from app.client.yandex import YandexClient
+from app.users.auth.client.yandex import YandexClient
 from app.infrastructure.database.accessor import get_db_session
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.repository.cache_task import TaskCache
-from app.repository.task import TaskRepository
-from app.repository.user import UserRepository
-from app.service.auth import AuthService
-from app.service.task import TaskService
+from app.tasks.repository.cache_task import TaskCache
 from fastapi import Depends
 from redis import Redis
-
-from app.service.user import UserService
 from app.settings import settings
+from app.users.auth.service import AuthService
+from app.users.user_profile.repository import UserRepository
+from app.users.user_profile.service import UserService
 
 
 async def get_tasks_repository(db_session: AsyncSession = Depends(get_db_session)) -> TaskRepository:

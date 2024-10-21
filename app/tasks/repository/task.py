@@ -1,7 +1,7 @@
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.tasks import Tasks, Categories
-from app.schema.tasks import TaskSchema, TaskBaseSchema
+from app.tasks.models import Tasks, Categories
+from app.tasks.schema import TaskBaseSchema, TaskSchema
 
 
 class TaskRepository:

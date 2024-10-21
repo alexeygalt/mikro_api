@@ -1,17 +1,19 @@
 from dataclasses import dataclass
 
-from app.client.google import GoogleClient
-from app.client.yandex import YandexClient
+from app.users.auth.client.google import GoogleClient
+from app.users.auth.client.yandex import YandexClient
 from app.exeptions import UserNotFoundException, UserNotCorrectPasswordException, TokenExpiredException, \
     TokenNotValidException
-from app.models.user import UserProfile
-from app.repository.user import UserRepository
-from app.schema.user import UserLoginSchema, UserCreateSchema
+
 from jose import jwt, JWTError
 import datetime as dt
 from datetime import timedelta
 
 from app.settings import Settings
+from app.users.auth.schema import UserLoginSchema
+from app.users.user_profile.models import UserProfile
+from app.users.user_profile.repository import UserRepository
+from app.users.user_profile.schema import UserCreateSchema
 
 
 @dataclass

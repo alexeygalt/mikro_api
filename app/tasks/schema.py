@@ -1,6 +1,4 @@
-from typing import Annotated
-
-from pydantic import BaseModel, model_validator, Field
+from pydantic import BaseModel, model_validator
 
 
 class TaskBaseSchema(BaseModel):
@@ -21,6 +19,3 @@ class TaskSchema(TaskBaseSchema):
 
     class Config:
         from_attributes = True
-
-
-
