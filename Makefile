@@ -1,7 +1,7 @@
 .PHONY: install run test
 
 run:
-	poetry run uvicorn main:app --host 0.0.0.0 --port 8000 --reload --env-file .env
+	poetry run gunicorn app.main:app -c gunicorn.conf.py
 
 migrate-create:
 	alembic revision --autogenerate -m $(MIGRATION)

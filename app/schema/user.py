@@ -6,7 +6,12 @@ class UserLoginSchema(BaseModel):
     access_token: str
 
 
-class UserCreateSchema(BaseModel):
+class UserBaseSchema(BaseModel):
+    username: str
+    password: str
+
+
+class UserCreateSchema(UserBaseSchema):
     username: str | None = None
     password: str | None = None
     email: str | None = None

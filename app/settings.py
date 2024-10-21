@@ -31,11 +31,11 @@ class Settings(BaseSettings):
     YANDEX_TOKEN_URL: str = 'https://oauth.yandex.ru/token'
 
     class Config:
-        env_file = '.env'
+        env_file = '../.env'
 
     @property
     def get_db_uri(self) -> str:
-        return f'postgresql+psycopg2://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
+        return f'postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
 
     @property
     def google_redirect_url(self) -> str:

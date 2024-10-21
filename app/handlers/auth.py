@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi.responses import RedirectResponse
 from fastapi import APIRouter, Depends
 
-from dependency import get_auth_service
-from exeptions import UserNotFoundException, UserNotCorrectPasswordException
-from schema.user import UserCreateSchema, UserLoginSchema
-from service.auth import AuthService
+from app.dependency import get_auth_service
+from app.exeptions import UserNotFoundException, UserNotCorrectPasswordException
+from app.schema.user import UserCreateSchema, UserLoginSchema
+from app.service.auth import AuthService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -25,20 +25,22 @@ async def login(body: UserCreateSchema,
 @router.get("/login/google", response_class=RedirectResponse)
 async def google_login(auth_service: Annotated[AuthService, Depends(get_auth_service)]):
     redirect_url = auth_service.get_google_redirect_url()
+    print(redirect_url)
     return RedirectResponse(url=redirect_url)
 
 
 @router.get("/login/yandex", response_class=RedirectResponse)
 async def yandex_login(auth_service: Annotated[AuthService, Depends(get_auth_service)]):
     redirect_url = auth_service.get_yandex_redirect_url()
+    print(redirect_url)
     return RedirectResponse(url=redirect_url)
 
 
 @router.get("/google")
 async def google_auth(auth_service: Annotated[AuthService, Depends(get_auth_service)], code: str):
-    return auth_service.google_auth(code=code)
+    return await auth_service.google_auth(code=code)
 
 
 @router.get("/yandex")
 async def yandex_auth(auth_service: Annotated[AuthService, Depends(get_auth_service)], code: str):
-    return auth_service.yandex_auth(code=code)
+    return await auth_service.yandex_auth(code=code)
