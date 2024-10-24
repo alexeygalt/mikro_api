@@ -2,7 +2,8 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
+from app.users.user_profile.models import UserProfile
+from app.tasks.models import *
 from alembic import context
 
 from app.infrastructure.database.database import Base

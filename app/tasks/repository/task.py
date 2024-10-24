@@ -14,7 +14,6 @@ class TaskRepository:
             task = (await session.execute(query)).scalar_one_or_none()
         return task
 
-    # def get_tasks(self) -> list[TaskSchema]:
     async def get_tasks(self) -> list[Tasks]:
         async with self.db_session as session:
             tasks = (await session.execute(select(Tasks))).scalars().all()

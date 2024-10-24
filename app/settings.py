@@ -1,7 +1,10 @@
 from pydantic_settings import BaseSettings
+from typing import Literal
 
 
 class Settings(BaseSettings):
+    MODE: Literal["DEV", "TEST"]
+
     # psql
     DB_USER: str
     DB_PASSWORD: str
@@ -30,12 +33,22 @@ class Settings(BaseSettings):
     YANDEX_REDIRECT_URI: str
     YANDEX_TOKEN_URL: str = 'https://oauth.yandex.ru/token'
 
+    TEST_DB_HOST: str
+    TEST_DB_PORT: int
+    TEST_DB_USER: str
+    TEST_DB_PASS: str
+    TEST_DB_NAME: str
+
     class Config:
         env_file = '.env'
 
     @property
     def get_db_uri(self) -> str:
         return f'postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
+
+    @property
+    def get_test_db_uri(self) -> str:
+        return f'postgresql+asyncpg://{self.TEST_DB_USER}:{self.TEST_DB_PASS}@{self.TEST_DB_HOST}:{self.TEST_DB_PORT}/{self.TEST_DB_NAME}'
 
     @property
     def google_redirect_url(self) -> str:
