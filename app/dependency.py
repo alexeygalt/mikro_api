@@ -6,6 +6,7 @@ from app.tasks.service import TaskService
 from app.users.auth.client.google import GoogleClient
 from app.exeptions import TokenExpiredException, TokenNotValidException
 from app.infrastructure.cache.accessor import get_redis_connection
+from app.users.auth.client.mail import MailClient
 from app.users.auth.client.yandex import YandexClient
 from app.infrastructure.database.accessor import get_db_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -48,13 +49,19 @@ async def get_yandex_client(
     return YandexClient(settings=settings)
 
 
+async def get_mail_client(
+) -> MailClient:
+    return MailClient()
+
+
 async def get_auth_service(
         user_repository: UserRepository = Depends(get_user_repository),
         google_client: GoogleClient = Depends(get_google_client),
-        yandex_client: YandexClient = Depends(get_yandex_client)
+        yandex_client: YandexClient = Depends(get_yandex_client),
+        mail_client: MailClient = Depends(get_mail_client)
 ) -> AuthService:
     return AuthService(user_repository=user_repository, settings=settings, google_client=google_client,
-                       yandex_client=yandex_client)
+                       yandex_client=yandex_client,mail_client=mail_client)
 
 
 async def get_user_service(

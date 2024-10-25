@@ -1,4 +1,6 @@
-from fastapi import HTTPException, status, Response
+import time
+
+from fastapi import HTTPException, status, Response, BackgroundTasks
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from app.exeptions import TaskNotFoundException
@@ -11,9 +13,17 @@ router = APIRouter(prefix="/task", tags=['task'])
 router.get('/')
 
 
+def get_tasks_log(tasks_count: int):
+    time.sleep(3.0)
+    print(f"get {tasks_count} tasks")
+
+
 @router.get('/all', response_model=list[TaskSchema])
-async def get_task(task_service: Annotated[TaskService, Depends(get_tasks_repository)]):
-    return await task_service.get_tasks()
+async def get_task(task_service: Annotated[TaskService, Depends(get_tasks_repository)],
+                   background_tasks: BackgroundTasks):
+    tasks = await task_service.get_tasks()
+    background_tasks.add_task(get_tasks_log, tasks_count=len(tasks))
+    return tasks
 
 
 @router.post('/', response_model=TaskSchema)

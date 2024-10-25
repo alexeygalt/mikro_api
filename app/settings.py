@@ -39,6 +39,15 @@ class Settings(BaseSettings):
     TEST_DB_PASS: str
     TEST_DB_NAME: str
 
+    # celery
+    CELERY_REDIS_URL: str = 'redis://localhost:6379/0'
+
+    #mail
+    from_email: str = 'alexeygalt@gmail.com'
+    SMTP_HOST: str = 'smtp.gmail.com'
+    SMTP_PORT: int = 465
+    SMTP_PASSWORD: str
+
     class Config:
         env_file = '.env'
 

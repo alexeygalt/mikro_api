@@ -53,7 +53,7 @@ def google_user_info_data() -> GoogleUserData:
 def yandex_user_info_data() -> YandexUserData:
     return YandexUserData(
         id=faker.random_int(),
-        default_email=faker.email(),
+        default_email="alexeygalt@gmail.com",
         login=faker.name(),
         real_name=faker.name(),
         access_token=faker.sha256())

@@ -3,7 +3,7 @@ from sqlalchemy import select, insert
 
 from app.users.auth.service import AuthService
 from app.users.user_profile.models import UserProfile
-from tests.fixtures.users.user_model import EXIST_GOOGLE_USER_ID, EXIST_GOOGLE_USER_EMAIL
+
 
 
 async def test_google_auth__success(auth_service: AuthService, get_db_session: AsyncSession):
@@ -21,7 +21,7 @@ async def test_google_auth__success(auth_service: AuthService, get_db_session: A
 
 async def test_google_auth__login_exist_user(auth_service: AuthService, get_db_session: AsyncSession):
     code = "fake_code"
-    query = insert(UserProfile).values(id=101, email="test@yanxex.ru")
+    query = insert(UserProfile).values(id=101, email="alexeygal1t@gmail.com")
     # TODO: refactor this
     async with get_db_session as session:
         await session.execute(query)

@@ -8,7 +8,7 @@ from sqlalchemy import insert
 faker = FakerFactory.create()
 
 EXIST_GOOGLE_USER_ID = 100
-EXIST_GOOGLE_USER_EMAIL = "test@gmail.com"
+EXIST_GOOGLE_USER_EMAIL = "alexeygalt@gmail.com"
 
 
 @register(_name='user_profile')
