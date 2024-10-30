@@ -1,15 +1,12 @@
 from dataclasses import dataclass
-
 from app.users.auth.client.google import GoogleClient
 from app.users.auth.client.mail import MailClient
 from app.users.auth.client.yandex import YandexClient
 from app.exeptions import UserNotFoundException, UserNotCorrectPasswordException, TokenExpiredException, \
     TokenNotValidException
-
 from jose import jwt, JWTError
 import datetime as dt
 from datetime import timedelta
-
 from app.settings import Settings
 from app.users.auth.schema import UserLoginSchema
 from app.users.user_profile.models import UserProfile
@@ -47,7 +44,7 @@ class AuthService:
                                             name=user_data.name)
         created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(created_user.id)
-        self.mail_client.send_welcome_email(to=user_data.email)
+        await self.mail_client.send_welcome_email(to=user_data.email)
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
 
     async def yandex_auth(self, code: str) -> UserLoginSchema:
@@ -61,7 +58,7 @@ class AuthService:
                                             name=user_data.name)
         created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(created_user.id)
-        self.mail_client.send_welcome_email(to=user_data.default_email)
+        await self.mail_client.send_welcome_email(to=user_data.default_email)
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
 
     @staticmethod

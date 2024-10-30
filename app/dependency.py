@@ -1,6 +1,9 @@
+import json
 from fastapi import HTTPException
 from fastapi import security
-
+from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
+from app.broker.consumer import BrokerConsumer
+from app.broker.producer import BrokerProducer
 from app.tasks.repository.task import TaskRepository
 from app.tasks.service import TaskService
 from app.users.auth.client.google import GoogleClient
@@ -13,10 +16,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.tasks.repository.cache_task import TaskCache
 from fastapi import Depends
 from redis import Redis
-from app.settings import settings
+from app.settings import settings, Settings
 from app.users.auth.service import AuthService
 from app.users.user_profile.repository import UserRepository
 from app.users.user_profile.service import UserService
+import asyncio
+from aiokafka.util import get_running_loop
 
 
 async def get_tasks_repository(db_session: AsyncSession = Depends(get_db_session)) -> TaskRepository:
@@ -49,9 +54,29 @@ async def get_yandex_client(
     return YandexClient(settings=settings)
 
 
+async def get_broker_producer() -> BrokerProducer:
+    settings = Settings()
+    return BrokerProducer(
+        producer=AIOKafkaProducer(bootstrap_servers=settings.BROKER_URL, loop=get_running_loop()),
+        email_topic=settings.EMAIL_TOPIC
+    )
+
+
+async def get_broker_consumer() -> BrokerConsumer:
+    settings = Settings()
+    return BrokerConsumer(
+        consumer=AIOKafkaConsumer('callback_email_topic',
+                                  bootstrap_servers=settings.BROKER_URL,
+                                  value_deserializer=lambda message: json.loads(message.decode('utf-8'))),
+        email_callback_topic=settings.EMAIL_CALLBACK_TOPIC
+    )
+
+
 async def get_mail_client(
+        broker_producer: BrokerProducer = Depends(get_broker_producer),
+        # broker_consumer: BrokerConsumer = Depends(get_broker_consumer)
 ) -> MailClient:
-    return MailClient()
+    return MailClient(settings=settings, broker_producer=broker_producer)
 
 
 async def get_auth_service(
@@ -61,7 +86,7 @@ async def get_auth_service(
         mail_client: MailClient = Depends(get_mail_client)
 ) -> AuthService:
     return AuthService(user_repository=user_repository, settings=settings, google_client=google_client,
-                       yandex_client=yandex_client,mail_client=mail_client)
+                       yandex_client=yandex_client, mail_client=mail_client)
 
 
 async def get_user_service(

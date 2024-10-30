@@ -1,5 +1,4 @@
 import time
-
 from fastapi import HTTPException, status, Response, BackgroundTasks
 from typing import Annotated
 from fastapi import APIRouter, Depends
@@ -20,7 +19,7 @@ def get_tasks_log(tasks_count: int):
 
 @router.get('/all', response_model=list[TaskSchema])
 async def get_task(task_service: Annotated[TaskService, Depends(get_tasks_repository)],
-                   background_tasks: BackgroundTasks):
+                   background_tasks: BackgroundTasks,):
     tasks = await task_service.get_tasks()
     background_tasks.add_task(get_tasks_log, tasks_count=len(tasks))
     return tasks
