@@ -26,7 +26,12 @@ class TaskRepository:
         return task
 
     async def create_task(self, task: TaskBaseSchema, user_id: int) -> TaskSchema:
-        task = Tasks(name=task.name, pomodoro_count=task.pomodoro_count, category_id=task.category_id, user_id=user_id)
+        task = Tasks(
+            name=task.name,
+            pomodoro_count=task.pomodoro_count,
+            category_id=task.category_id,
+            user_id=user_id,
+        )
         async with self.db_session as session:
             session.add(task)
             await session.commit()
@@ -35,7 +40,11 @@ class TaskRepository:
 
     async def update_task(self, task_id: int, task: TaskBaseSchema):
         async with self.db_session as session:
-            query = update(Tasks).where(Tasks.id == task_id).values(**task.dict(exclude_none=True))
+            query = (
+                update(Tasks)
+                .where(Tasks.id == task_id)
+                .values(**task.dict(exclude_none=True))
+            )
             await session.execute(query)
             await session.commit()
 
@@ -48,8 +57,11 @@ class TaskRepository:
             await session.commit()
 
     async def get_task_by_category_name(self, category_name: str) -> list[Tasks]:
-        query = select(Tasks).join(Categories, Tasks.category_id == Categories.id).where(
-            Categories.name == category_name)
+        query = (
+            select(Tasks)
+            .join(Categories, Tasks.category_id == Categories.id)
+            .where(Categories.name == category_name)
+        )
         async with self.db_session as session:
             tasks = (await session.execute(query)).scalars().all()
         return tasks

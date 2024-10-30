@@ -14,6 +14,7 @@ from app.users.user_profile.handlers import router as user_router
 
 # await self.broker_consumer.consume_callback_message()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     broker_consumer = await get_broker_consumer()

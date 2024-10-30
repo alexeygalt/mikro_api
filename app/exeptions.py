@@ -1,21 +1,21 @@
 class UserNotFoundException(Exception):
-    detail = 'User not found'
+    detail = "User not found"
 
 
 class UserNotCorrectPasswordException(Exception):
-    detail = 'Incorrect password'
+    detail = "Incorrect password"
 
 
 class TokenExpiredException(Exception):
-    detail = 'Token expired'
+    detail = "Token expired"
 
 
 class TokenNotValidException(Exception):
-    detail = 'Token not valid'
+    detail = "Token not valid"
 
 
 class TaskNotFoundException(Exception):
-    detail = 'Task not found'
+    detail = "Task not found"
 
 
 class GoogleAuthError(Exception):

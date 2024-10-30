@@ -11,7 +11,8 @@ else:
 
 engine = create_async_engine(url=DATABASE_URL, **DATABASE_PARAMS)
 AsyncSessionFactory = async_sessionmaker(
-    engine, autocommit=False, expire_on_commit=False)
+    engine, autocommit=False, expire_on_commit=False
+)
 
 
 async def get_db_session() -> AsyncSession:

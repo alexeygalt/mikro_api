@@ -23,7 +23,7 @@ class BrokerConsumer:
             await self.close_connection()
 
 
-#amqp
+# amqp
 
 # async def make_amqp_consumer():
 #     connection = await get_broker_connection()

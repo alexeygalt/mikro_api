@@ -10,8 +10,9 @@ class UserRepository:
     db_session: AsyncSession
 
     async def create_user(self, user: UserBaseSchema) -> UserProfile:
-        query = insert(UserProfile).values(**user.model_dump()).returning(
-            UserProfile.id)
+        query = (
+            insert(UserProfile).values(**user.model_dump()).returning(UserProfile.id)
+        )
         async with self.db_session as session:
             user_id = (await session.execute(query)).scalar()
             await session.commit()

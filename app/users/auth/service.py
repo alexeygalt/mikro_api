@@ -2,8 +2,12 @@ from dataclasses import dataclass
 from app.users.auth.client.google import GoogleClient
 from app.users.auth.client.mail import MailClient
 from app.users.auth.client.yandex import YandexClient
-from app.exeptions import UserNotFoundException, UserNotCorrectPasswordException, TokenExpiredException, \
-    TokenNotValidException
+from app.exeptions import (
+    UserNotFoundException,
+    UserNotCorrectPasswordException,
+    TokenExpiredException,
+    TokenNotValidException,
+)
 from jose import jwt, JWTError
 import datetime as dt
 from datetime import timedelta
@@ -40,8 +44,11 @@ class AuthService:
             access_token = self.generate_access_token(user.id)
             return UserLoginSchema(user_id=user.id, access_token=access_token)
 
-        create_user_data = UserCreateSchema(google_access_token=user_data.access_token, email=user_data.email,
-                                            name=user_data.name)
+        create_user_data = UserCreateSchema(
+            google_access_token=user_data.access_token,
+            email=user_data.email,
+            name=user_data.name,
+        )
         created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(created_user.id)
         await self.mail_client.send_welcome_email(to=user_data.email)
@@ -50,12 +57,17 @@ class AuthService:
     async def yandex_auth(self, code: str) -> UserLoginSchema:
         user_data = await self.yandex_client.get_user_info(code)
 
-        if user := await self.user_repository.get_user_by_email(email=user_data.default_email):
+        if user := await self.user_repository.get_user_by_email(
+            email=user_data.default_email
+        ):
             access_token = self.generate_access_token(user.id)
             return UserLoginSchema(user_id=user.id, access_token=access_token)
 
-        create_user_data = UserCreateSchema(yandex_access_token=user_data.access_token, email=user_data.default_email,
-                                            name=user_data.name)
+        create_user_data = UserCreateSchema(
+            yandex_access_token=user_data.access_token,
+            email=user_data.default_email,
+            name=user_data.name,
+        )
         created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(created_user.id)
         await self.mail_client.send_welcome_email(to=user_data.default_email)
@@ -70,20 +82,24 @@ class AuthService:
 
     def generate_access_token(self, user_id: int) -> str:
         expires_date_unix = (dt.datetime.now() + timedelta(minutes=30)).timestamp()
-        token = jwt.encode({'user_id': user_id,
-                            'expire': expires_date_unix},
-                           self.settings.JWT_SECRET_KEY,
-                           algorithm=self.settings.JWT_ENCODE_ALGORITHM)
+        token = jwt.encode(
+            {"user_id": user_id, "expire": expires_date_unix},
+            self.settings.JWT_SECRET_KEY,
+            algorithm=self.settings.JWT_ENCODE_ALGORITHM,
+        )
 
         return token
 
     def get_user_id_from_token(self, access_token: str) -> int:
         try:
-            payload = jwt.decode(access_token, self.settings.JWT_SECRET_KEY,
-                                 algorithms=[self.settings.JWT_ENCODE_ALGORITHM])
+            payload = jwt.decode(
+                access_token,
+                self.settings.JWT_SECRET_KEY,
+                algorithms=[self.settings.JWT_ENCODE_ALGORITHM],
+            )
         except JWTError:
             raise TokenNotValidException
 
-        if payload['expire'] < dt.datetime.now().timestamp():
+        if payload["expire"] < dt.datetime.now().timestamp():
             raise TokenExpiredException
-        return payload['user_id']
+        return payload["user_id"]

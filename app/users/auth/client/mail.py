@@ -15,7 +15,7 @@ class MailClient:
             "message": "Welcome to mikro",
             "email": to,
             "subject": "Welcome",
-            "correlation_id": str(uuid.uuid4())
+            "correlation_id": str(uuid.uuid4()),
         }
         await self.broker_producer.send_welcome_email(email_data=email_body)
         return

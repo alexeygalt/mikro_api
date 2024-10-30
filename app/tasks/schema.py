@@ -6,7 +6,7 @@ class TaskBaseSchema(BaseModel):
     pomodoro_count: int | None = None
     category_id: int | None = None
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def check_name_and_pomodoro(self):
         if self.name is None and self.pomodoro_count is None:
             raise ValueError("Task name and pomodoro count should be provided")

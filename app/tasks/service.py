@@ -24,7 +24,9 @@ class TaskService:
         return task
 
     async def get_task(self, task_id: int, user_id: int) -> TaskSchema:
-        task = await self.task_repository.get_user_task(task_id=task_id, user_id=user_id)
+        task = await self.task_repository.get_user_task(
+            task_id=task_id, user_id=user_id
+        )
         if not task:
             raise TaskNotFoundException
         return task
