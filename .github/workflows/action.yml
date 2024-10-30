@@ -47,7 +47,7 @@ jobs:
           poetry install
           pip install twisted
       - name: Run Unit Tests
-        run: poetry run pytest tests/unit
+        run:  pytest tests/unit
 
 
 
