@@ -44,10 +44,10 @@ jobs:
             |
           python -m pip install --upgrade pip
           pip install poetry
+          poetry add twisted
           poetry install
-          pip install twisted
       - name: Run Unit Tests
-        run:  pytest tests/unit
+        run: poetry run pytest tests/unit
 
 
 
