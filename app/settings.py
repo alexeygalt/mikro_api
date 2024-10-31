@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     # # amqp
     # AMQP_URL: str = 'amqp://guest:guest@localhost:5672//'
 
+    SENTRY_DNS : str
+
     class Config:
         env_file = ".env"
 

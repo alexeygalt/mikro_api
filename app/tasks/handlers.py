@@ -62,3 +62,8 @@ async def delete_task(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.detail)
     await task_service.delete_task(task_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/sentry-debug")
+async def trigger_error():
+    division_by_zero = 1 / 0
