@@ -4,6 +4,7 @@ from typing import Literal
 
 class Settings(BaseSettings):
     MODE: Literal["DEV", "TEST"]
+    LOG_LEVEL: str = "INFO"
 
     # psql
     DB_USER: str
@@ -45,7 +46,7 @@ class Settings(BaseSettings):
     # # amqp
     # AMQP_URL: str = 'amqp://guest:guest@localhost:5672//'
 
-    SENTRY_DNS : str
+    SENTRY_DNS: str
 
     class Config:
         env_file = ".env"

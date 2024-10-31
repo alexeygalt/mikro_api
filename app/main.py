@@ -1,8 +1,10 @@
 import asyncio
 import sentry_sdk
+import time
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from app.dependency import get_broker_consumer
+from app.logger import logger
 from app.settings import Settings
 from app.tasks.handlers import router as task_router
 from app.users.auth.handlers import router as auth_router
@@ -20,16 +22,12 @@ settings = Settings()
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DNS,
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for tracing.
     traces_sample_rate=1.0,
     _experiments={
-        # Set continuous_profiling_auto_start to True
-        # to automatically start the profiler on when
-        # possible.
         "continuous_profiling_auto_start": True,
     },
 )
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,3 +43,12 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(task_router)
 app.include_router(auth_router)
 app.include_router(user_router)
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    logger.info("Request handling time", extra={"process_time": round(process_time, 4)})
+    return response
